@@ -26,12 +26,7 @@ app.get("/api/:date", function (req, res) {
     res.json({
       unix: req.params.date,
       utc: new Date(req.params.date),
-    });
-  } else {
-    res.json({
-      unix: Math.floor(new Date(req.params.date).getTime() / 1000),
-      utc: new Date(req.params.date),
-    });
+    }); 
   }
 });
 
