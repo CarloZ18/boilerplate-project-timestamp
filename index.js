@@ -25,12 +25,12 @@ app.get("/api/:date", function (req, res) {
   if (req.params.date.match(dateInUtc) === false) {
     res.json({
       unix: req.params.date,
-      utc: "hola",
+      utc: new Date(req.params.date),
     });
   } else {
     res.json({
       unix: Math.floor(new Date(req.params.date).getTime() / 1000),
-      utc: new Date("2015,12,25"),
+      utc: new Date(req.params.date),
     });
   }
 });
