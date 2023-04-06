@@ -22,7 +22,7 @@ app.get("/", function (req, res) {
 // your first API endpoint... 
 app.get("/api/:date", function (req, res) {
   const dateInUtc = /\d{4}-\d{2}-\d{2}/gm;
-  if (req.params.date.match(dateInUtc) === false) {
+  if (req.params.date.match(dateInUtc) == null) {
     res.json({
       unix: req.params.date,
       utc: new Date(req.params.date),
