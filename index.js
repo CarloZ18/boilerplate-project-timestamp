@@ -4,9 +4,8 @@
 // init project
 var express = require('express');
 var app = express();
-let bodyParser=require("body-parser")
 
-app.use(bodyParser.urlencoded({extended: false}));
+
 
 // enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
 // so that your API is remotely testable by FCC 
@@ -27,30 +26,34 @@ const dateInUtc = /\d{4}-\d{2}-\d{2}/gm;
 const dateInUnix=/\d{13}/gm
 
 app.get("/api", function (req, res) {
- res.json({
-      unix: Math.floor(new Date().getTime()),
-      utc:new Date().toUTCString()
- })
+  res.json({
+    unix: Math.floor(new Date().getTime()),
+    utc: new Date().toUTCString(),
+  });
 });
 
 app.get("/api/:date", function (req, res) {
-  function isCorrectDate(date) {
-    return date instanceof Date && isFinite(date);
-}
-    if (req.params.date.match(dateInUnix) !== null) {
+  const dateInUnix = /\d{13}/gm;
+  const isValidDate = function (date) {
+    return new Date(date) !== "Invalid Date" && !isNaN(new Date(date));
+  };
+  if (
+    isValidDate(req.params.date) === true ||
+    req.params.date.match(dateInUnix) !== null
+  ) {
+    req.params.date.match(dateInUnix) !== null
+      ? res.json({
+          unix: Number(req.params.date),
+          utc: new Date(Number(req.params.date)).toUTCString(),
+        })
+      : res.json({
+          unix: Math.floor(new Date(req.params.date).getTime()),
+          utc: new Date(req.params.date).toUTCString(),
+        });
+  } else {
     res.json({
-      unix: Number(req.params.date),
-      utc: new Date(Number((req.params.date))).toUTCString(),
+      error: "Invalid Date",
     });
-  } else if(req.params.date.match(dateInUtc) !== null ) {
-    res.json({
-      unix: Math.floor(new Date(req.params.date).getTime()),
-      utc: new Date((req.params.date)).toUTCString(),
-    });
-  }else if(isCorrectDate(req.params.date) === false){
-    res.json({
-     error:"Invalid Date"
-    })
   }
 });
 
