@@ -20,13 +20,34 @@ app.get("/", function (req, res) {
 
 
 // your first API endpoint... 
+const dateInUtc = /\d{4}-\d{2}-\d{2}/gm;
+const dateInUnix=/\d{13}/gm
+
+app.get("/api", function (req, res) {
+ res.json({
+      unix: Math.floor(new Date().getTime()),
+      utc:new Date().toUTCString()
+ })
+});
+
 app.get("/api/:date", function (req, res) {
-  const dateInUtc = /\d{4}-\d{2}-\d{2}/gm;
-  if (req.params.date.match(dateInUtc) == null) {
+  function isCorrectDate(date) {
+    return date instanceof Date && isFinite(date);
+}
+    if (req.params.date.match(dateInUnix) !== null) {
     res.json({
-      unix: req.params.date,
-      utc: new Date(req.params.date),
-    }); 
+      unix: Number(req.params.date),
+      utc: new Date(Number((req.params.date))).toUTCString(),
+    });
+  } else if(req.params.date.match(dateInUtc) !== null ) {
+    res.json({
+      unix: Math.floor(new Date(req.params.date).getTime()),
+      utc: new Date((req.params.date)).toUTCString(),
+    });
+  }else if(isCorrectDate(req.params.date) === false){
+    res.json({
+     error:"Invalid Date"
+    })
   }
 });
 
